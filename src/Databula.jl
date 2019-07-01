@@ -6,6 +6,7 @@ import TerminalMenus:request
 
 export register_video, register_calibration#, register_experiment, register_run, register_poi
 
+
 mutable struct Dialog
     answer::String
 end
@@ -32,8 +33,21 @@ const pixelfolder = joinpath(sourcefolder, "pixel")
 # include("/home/yakir/dungProject/Databula/src/calibrations.jl")
 # include("/home/yakir/dungProject/Databula/src/intervals.jl")
 
+if !isdir(sourcefolder)
+    @info "creating the source folder" coffeesource
+    mkpath(pixelfolder)
 
-include("init.jl")
+    open(joinpath(sourcefolder, "video.json"), "w") do o
+        JSON3.write(o, AbstractTimeLine[])
+    end
+    open(joinpath(sourcefolder, "calibrations.json"), "w") do o
+        JSON3.write(o, Dict{UUID, Calibration}())
+    end
+else
+    @info "found existing source folder" coffeesource
+end
+
+
 include("videos.jl")
 include("calibrations.jl")
 
