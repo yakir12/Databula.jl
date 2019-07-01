@@ -17,6 +17,7 @@ This is a `Julia` script for registering the raw data into a long lasting and co
 3. type closed-square-bracket `]` once, you'll see the promt changing from `julia>` to `(v1.1) pkg>`
 3. Copy: 
    ```julia
+   add https://github.com/yakir12/DungBase.jl
    add https://github.com/yakir12/Databula.jl
    ```
    and paste it in the newly opened Julia-terminal (make sure you ), press Enter (this may take some time), and when it's done press BackSpace (or Delete) until the promt changes back to `julia>`.
