@@ -1,0 +1,22 @@
+name = "Databula"
+uuid = "b433fe0e-f647-5e52-b9ef-fe6f0cf5c356"
+authors = ["yakir12 <12.yakir@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
+Combinatorics = "861a8166-3701-5b0c-9a16-15d98fcdc6aa"
+Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
+DungBase = "bd6f3a87-2f53-57d0-9c4e-5625ef189a5e"
+JSON3 = "0f8b85d8-7281-11e9-16c2-39a750bddbf1"
+Observables = "510215fc-4207-5dde-b226-833fc4488ee2"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+TerminalMenus = "dc548174-15c3-5faf-af27-7997cfbde655"
+UUIDs = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
+VideoIO = "d6d074c3-1acf-5d4c-9a43-ef38773959a2"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
