@@ -41,7 +41,7 @@ if !isdir(sourcefolder)
         JSON3.write(o, AbstractTimeLine[])
     end
     open(joinpath(sourcefolder, "calibrations.json"), "w") do o
-        JSON3.write(o, Dict{UUID, Calibration}())
+        JSON3.write(o, Calibration[])
     end
 else
     @info "found existing source folder" coffeesource
@@ -50,6 +50,7 @@ end
 
 include("videos.jl")
 include("calibrations.jl")
+include("intervals.jl")
 
 # JSON3.StructType(::Type{AbstractTimeLine}) = JSON3.AbstractType()
 # JSON3.subtypekey(::Type{AbstractTimeLine}) = :type
@@ -119,31 +120,27 @@ end
 
 file = joinpath(sourcefolder, "calibrations.json")
 cs = open(file, "r") do i 
-    JSON3.read(i, Dict{UUID, Calibration})
+    JSON3.read(i, Vector{Calibration})
 end
 for c in cs
     newcalibrationᵒ[] = c
 end
 
-function getnewkey(di)
+#=function getnewkey(di)
     local k
     while haskey(di, (k=uuid1();)) end
     k
-end
-
-function _formatrow(t) 
-    ks = propertynames(t)
-    [join([string(k, ": ", getproperty(r, k)) for k in ks], ", ") for r in t]
-end
+end=#
 
 function register_calibration() 
-    file = joinpath(sourcefolder, "calibrations.json")
+    #=file = joinpath(sourcefolder, "calibrations.json")
     calibrations = open(file, "r") do i 
         JSON3.read(i, Dict{String, Calibration})
-    end
+    end=#
     boards = Board[c.board for c in values(calibrations)]
-    k = getnewkey(calibrations)
-    calibrations[k] = newcalibration(boards)
+    # k = getnewkey(calibrations)
+    newcalibrationᵒ[] = newcalibration(boards)
+    file = joinpath(sourcefolder, "calibrations.json")
     open(file, "w") do o
         JSON3.write(o, calibrations)
     end

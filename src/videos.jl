@@ -36,6 +36,7 @@ end
 const videocomment_dialog = Dialog()
 
 function _newvideo(files)
+    @label newvideol
     @info "Registering video file/s:" files
     sunregistered = getorder(files)
     durations = [VideoIO.get_duration(joinpath(coffeesource, file_name)) for file_name in sunregistered]
@@ -43,7 +44,12 @@ function _newvideo(files)
     nfiles = length(files)
     if nfiles == 1
         date_time = getdatetime(sunregistered[], Date(0))
-        return WholeVideo(VideoFile(files[], date_time, durations[]), comment)
+        try 
+            return WholeVideo(VideoFile(files[], date_time, durations[]), comment)
+        catch ex
+            @warn "something was wrong" ex
+            @goto newvideol
+        end
     else
         options = ["segmented: multiple segments with no temporal gaps", "disjointed: video files with temppral gaps between them"]
         menu = RadioMenu(options, default = 1)
@@ -54,14 +60,24 @@ function _newvideo(files)
             for i in 2:nfiles
                 date_times[i] = date_times[i - 1] + durations[i - 1] + Nanosecond(1)
             end
-            return FragmentedVideo(VideoFile.(sunregistered, date_times, durations), comment)
+            try 
+                return FragmentedVideo(VideoFile.(sunregistered, date_times, durations), comment)
+            catch ex
+                @warn "something was wrong" ex
+                @goto newvideol
+            end
         else
             last_dt = DateTime(0)
             for (i, file_name) in enumerate(sunregistered)
                 date_times[i] = getdatetime(file_name, last_dt)
                 last_dt = date_times[i] + durations[i]
             end
-            return DisjointVideo(VideoFile.(sunregistered, date_times, durations), comment)
+            try 
+                return DisjointVideo(VideoFile.(sunregistered, date_times, durations), comment)
+            catch ex
+                @warn "something was wrong" ex
+                @goto newvideol
+            end
         end
     end
 end

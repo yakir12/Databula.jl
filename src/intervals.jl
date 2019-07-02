@@ -69,6 +69,7 @@ function findvideoindex(vf)
 end
 
 function newinterval(ask_stop::Bool)
+    @label newintervall
     i = request("In which video file did this POI start?", videofile_menu)
     start_video = videofiles[i]
     video, i = findvideoindex(start_video)
@@ -82,6 +83,11 @@ function newinterval(ask_stop::Bool)
         missing
     end
     comment = request("Comments about this specific POI?", poi_dialog)
-    Temporal(video, AbstractPeriod(start, stop), comment)
+    try 
+        Temporal(video, AbstractPeriod(start, stop), comment)
+    catch ex
+        @warn "something was wrong" ex
+        @goto newintervall
+    end
 end
 

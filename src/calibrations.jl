@@ -52,7 +52,12 @@ function newboard(designations)
         @warn "you must give some minimal description. Think about the future generations!"
         @goto describe
     end
-    Board(designation, checker_width_cm, (checker_per_width, checker_per_height), board_description)
+    try 
+        Board(designation, checker_width_cm, (checker_per_width, checker_per_height), board_description)
+    catch ex
+        @warn "something was wrong" ex
+        @goto desig
+    end
 end
 
 const calibration_type_menu = RadioMenu(["Stationary", "Moving"])
@@ -64,12 +69,14 @@ function newcalibration(boards)
         newboard(String[])
     else
         designations = getfield.(boards, :designation)
-        options = _formatrow(designations)
+        options = designations
         pushfirst!(options, "Register a new board")
         board_menu = RadioMenu(options, default = min(2, length(options)))
         i = request("Which board was used?", board_menu)
         i == 1 ? newboard(designations) : boards[i - 1]
     end
+
+    @label newcalibl
 
     i = request("Which type of calibration is it?", calibration_type_menu)
     intrinsic = if i == 1 
@@ -82,6 +89,10 @@ function newcalibration(boards)
     extrinsic = newinterval(false)
 
     comment = request("Any comments about this calibration?", calibration_comment_dialog)
-
-    Calibration(intrinsic, extrinsic, board, comment)
+    try 
+        Calibration(intrinsic, extrinsic, board, comment)
+    catch ex
+        @warn "something was wrong" ex
+        @goto newcalibl
+    end
 end

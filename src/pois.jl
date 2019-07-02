@@ -8,6 +8,11 @@ function newpoi(i, id)
     return Symbol(poitype) => poi
 end
 
+function _formatrow(t) 
+    ks = propertynames(t)
+    [join([string(k, ": ", getproperty(r, k)) for k in ks], ", ") for r in t]
+end
+
 function register_pois(ids)
 
     pois = Dict(newpoi(i, id) for (i, id) in enumerate(ids))
@@ -52,12 +57,11 @@ function register_pois(ids)
     i = request("Which column in this `.res` file contains the pixel-coordinates for this POI?", menu)
     try 
         p = getcoordinates(resfileio, parse(Int, i))
+        writedlm(joinpath(pixelfolder, "$poiID.csv"), p)
     catch ex
         @warn "There was a problem processing $resfile. Try again…" ex
         @goto resfileq
     end
-
-    writedlm(joinpath(pixelfolder, "$poiID.csv"), p)
 
     nothing
 end
