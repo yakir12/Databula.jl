@@ -4,7 +4,7 @@ using DungBase
 using Dates, TerminalMenus, VideoIO, Combinatorics, JSON3, UUIDs, Observables
 import TerminalMenus:request
 
-export register_video, register_calibration#, register_experiment, register_run, register_poi
+export register_video, register_calibration, integrity_test#, register_experiment, register_run, register_poi
 
 
 mutable struct Dialog
@@ -64,7 +64,7 @@ for y in (UUIDs, DungBase, Dates), x in names(y, all = true)
     end
 end
 
-newvideoᵒ = Observable{AbstractTimeLine}(WholeVideo(VideoFile("a", now(), Nanosecond(1)), ""))
+newvideoᵒ = Observable{AbstractTimeLine}(WholeVideo())
 const videofile_menu = RadioMenu([""])
 empty!(videofile_menu.options)
 videofile_menu.pagesize -= 1
@@ -92,12 +92,38 @@ function register_video()
     v = newvideo(videofile_menu.options)
     if v ≢ nothing
         newvideoᵒ[] = v
+        file = joinpath(sourcefolder, "video.json")
         open(file, "w") do o
             JSON3.write(o, videos)
         end
     end
 end
 
+newcalibrationᵒ = Observable{Calibration}(Calibration())
+const calibration_menu = RadioMenu([""])
+empty!(calibration_menu.options)
+calibration_menu.pagesize -= 1
+const calibrations = Calibration[]
+
+# ns2s(t::Nanosecond) = t/Nanosecond(1000000000)
+
+_formatcalibration(x) = string("file: ", filenames(x), "; start: ", Time(0) + start(x))
+
+h2 = on(newcalibrationᵒ) do c
+    push!(calibration_menu.options, _formatcalibration(c))
+    if calibration_menu.pagesize < 11
+        calibration_menu.pagesize += 1
+    end
+    push!(calibrations, c)
+end
+
+file = joinpath(sourcefolder, "calibrations.json")
+cs = open(file, "r") do i 
+    JSON3.read(i, Dict{UUID, Calibration})
+end
+for c in cs
+    newcalibrationᵒ[] = c
+end
 
 function getnewkey(di)
     local k
@@ -123,15 +149,13 @@ function register_calibration()
     end
 end
 
-# function add_resfile()
-# ps = newresfile()
+function add_resfile()
+    ids = newresfile()
+    register_pois(ids)
+end
 
 
 function register_pois() 
-    file = joinpath(sourcefolder, "experiments.json")
-    experiments = open(file, "r") do i 
-        JSON3.read(i, Vector{Experiment})
-    end
     boards = Board[c.board for c in values(calibrations)]
     k = getnewkey(calibrations)
     calibrations[k] = newcalibration(boards)
@@ -139,6 +163,7 @@ function register_pois()
         JSON3.write(o, calibrations)
     end
 end
+
 
 
 

@@ -88,3 +88,34 @@ function newvideo(existing)
     end
     _newvideo(files)
 end
+
+function integrity_test()
+    @info "testing integrity of the videos"
+    file = joinpath(sourcefolder, "video.json")
+    vs = open(file, "r") do i 
+        JSON3.read(i, Vector{Union{WholeVideo, FragmentedVideo, DisjointVideo}})
+    end
+    allregistered = vcat(filenames.(vs)...)
+    allfiles = filter(goodvideo, readdir(coffeesource))
+    pass1 = true
+    for file in allfiles
+        if file ∉ allregistered
+            @warn "found an unregistered video file!" file
+            pass1 = false
+        end
+    end
+    if pass1
+        @info "all video files are registered"
+    end
+    pass2 = true
+    for file in allregistered
+        if file ∉ allfiles
+            @warn "a registered video file is missing its file!" file
+            pass2 = false
+        end
+    end
+    if pass2
+        @info "all registered video files are accounted for"
+    end
+    pass1 && pass2
+end

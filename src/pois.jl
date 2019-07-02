@@ -1,22 +1,24 @@
-using MAT
+poi_type_dialog = collect(Dialog() for _ in 1:10)
 
-function getpoi()
-    poi = loadtable(poi_file_name, indexcols = (:poi))
-    setcol(poi, :poi => :poi => UUID, :run => :run => UUID, :calibration => :calibration => UUID, :interval => :interval => UUID)
+function newpoi(i, id)
+    poitype = request("What POI is this (e.g. nest, feeder, track…)?", poi_type_dialog[i])
+    calibration = request("Which calibration calibrates this POI?", calibration_menu)
+    temporal = newinterval(poitype == "track")
+    poi = POI(calibration, temporal, id)
+    return Symbol(poitype) => poi
 end
 
-function register_poi()
+function register_pois(ids)
 
-    println("What POI is this (e.g. nest, feeder, track…)?")
-    poitype = strip(readline())
+    pois = Dict(newpoi(i, id) for (i, id) in enumerate(ids))
 
-    intervalID = register_interval(poitype == "track")
+    file = joinpath(sourcefolder, "experiments.json")
+    experiments = open(file, "r") do i 
+        JSON3.read(i, Vector{Experiment})
+    end
 
-    calibration = getcalibration()
-    options = _formatrow(calibration)
-    menu = RadioMenu(options)
-    i = request("Which calibration calibrates this POI?", menu)
-    calibrationID = calibration[i].calibration
+
+
 
     experiment = getexperiment()
     options = _formatrow(experiment)
