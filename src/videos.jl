@@ -123,10 +123,10 @@ function integrity_test()
     pass2 = true
     for file in allregistered
         if file.name ∉ allfiles
-            @warn "a registered video file is missing its file!" file
+            @warn "a registered video file is missing its file!" file.name
             pass2 = false
         else
-            creation = unix2datetime(ctime(joinpath(coffeesource, file)))
+            creation = unix2datetime(ctime(joinpath(coffeesource, file.name)))
             registered = start(file)
             if registered ≠ actual
                 @warn "the registered starting date & time doesn't match the creation date & time on the file" registered creation
