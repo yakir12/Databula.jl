@@ -103,14 +103,16 @@ function newvideo(existing)
     _newvideo(files)
 end
 
+const change_start = RadioMenu(["yes", "no"])
 function integrity_test()
     @info "testing integrity of the videos"
     vs = deserialize(joinpath(sourcefolder, "video"))
-    allregistered = vcat(filenames.(vs)...)
+    allregistered = vcat(files.(vs)...)
+    allregisteredtxt = getfield.(allregistered, :name)
     allfiles = filter(goodvideo, readdir(coffeesource))
     pass1 = true
     for file in allfiles
-        if file ∉ allregistered
+        if file ∉ allregisteredtxt
             @warn "found an unregistered video file!" file
             pass1 = false
         end
@@ -120,9 +122,27 @@ function integrity_test()
     end
     pass2 = true
     for file in allregistered
-        if file ∉ allfiles
+        if file.name ∉ allfiles
             @warn "a registered video file is missing its file!" file
             pass2 = false
+        else
+            creation = unix2datetime(ctime(joinpath(coffeesource, file)))
+            registered = start(file)
+            if registered ≠ actual
+                @warn "the registered starting date & time doesn't match the creation date & time on the file" registered creation
+                #=i = requestᵐ("Do you want to change the duration of this file to the actual duration, $creation ?", change_start)
+                if i == 1
+                    file.start = creation
+                end=#
+                pass2 = false
+            end
+            actual = Time(0) + VideoIO.get_duration(joinpath(coffeesource, file.name))
+            registered = Time(0) + duration(file)
+            if registered ≠ actual
+                @warn "the registered duration doesn't match the actual duration of the file! Correcting this." registered actual 
+                #=file.duration = actual - Time(0)
+                pass2 = false=#
+            end
         end
     end
     if pass2

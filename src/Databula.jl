@@ -85,7 +85,7 @@ function register_video()
 end
 
 newcalibrationᵒ = Observable{Calibration}(Calibration())
-const calibration_menu = RadioMenu(["", " "])
+const calibration_menu = MultiSelectMenu(["", " "])
 empty!(calibration_menu.options)
 calibration_menu.pagesize -= 2
 const calibrations = Calibration[]
