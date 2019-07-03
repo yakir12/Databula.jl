@@ -27,7 +27,7 @@ function register_pois(ids)
     end
     file = joinpath(sourcefolder, "experiments.json")
     experiments = open(file, "r") do i 
-        JSON3.read(i, Vector{Experiment})
+        # JSON3.read(i, Vector{Experiment})
     end
 
 

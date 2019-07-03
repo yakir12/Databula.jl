@@ -105,10 +105,7 @@ end
 
 function integrity_test()
     @info "testing integrity of the videos"
-    file = joinpath(sourcefolder, "video.json")
-    vs = open(file, "r") do i 
-        JSON3.read(i, Vector{Union{WholeVideo, FragmentedVideo, DisjointVideo}})
-    end
+    vs = deserialize(joinpath(sourcefolder, "video"))
     allregistered = vcat(filenames.(vs)...)
     allfiles = filter(goodvideo, readdir(coffeesource))
     pass1 = true
