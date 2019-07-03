@@ -7,18 +7,17 @@ function tryparsedatetime(x)
     end
 end
 
-const videodatetime_dialog = Dialog()
-
 function getdatetime(file, minimum_dt)
     @label askdatetime
-    _dt = request("Specify a creation date & time for: $file", videodatetime_dialog)
+    dialog = Dialog(string(unix2datetime(ctime(joinpath(coffeesource, file)))))
+    _dt = requestᵐ("Specify a creation date & time for: $file", dialog)
     dt = tryparsedatetime(_dt)
     if dt ≡ nothing
         @warn "the format of the date or time is wrong, try something like:" now()
         @goto askdatetime
     end
     if dt < minimum_dt
-        @warn "the date & time should be come after the end of the previous video segment" minimum_dt
+        @warn "the date & time should come after the end of the previous video segment" minimum_dt
         @goto askdatetime
     end
     dt
@@ -34,13 +33,14 @@ function getorder(_files)
 end
 
 const videocomment_dialog = Dialog()
+const video_type_menu = RadioMenu(["segmented: multiple segments with no temporal gaps", "disjointed: video files with temppral gaps between them"], 1)
 
 function _newvideo(files)
     @label newvideol
     @info "Registering video file/s:" files
     sunregistered = getorder(files)
     durations = [VideoIO.get_duration(joinpath(coffeesource, file_name)) for file_name in sunregistered]
-    comment = request("Any comments about this video as a whole?", videocomment_dialog)
+    comment = requestᵐ("Any comments about this video as a whole?", videocomment_dialog)
     nfiles = length(files)
     if nfiles == 1
         date_time = getdatetime(sunregistered[], Date(0))
@@ -51,9 +51,7 @@ function _newvideo(files)
             @goto newvideol
         end
     else
-        options = ["segmented: multiple segments with no temporal gaps", "disjointed: video files with temppral gaps between them"]
-        menu = RadioMenu(options, default = 1)
-        i = request("Is this video segmented or disjointed?", menu)
+        i = requestᵐ("Is this video segmented or disjointed?", video_type_menu)
         date_times = Vector{DateTime}(undef, nfiles)
         if i == 1
             date_times[1] = getdatetime(sunregistered[1], Date(0))
@@ -84,7 +82,7 @@ end
 
 function selectfiles(files)
     length(files) == 1 && return files
-    menu = MultiSelectMenu(files, default = 1:length(files))
+    menu = MultiSelectMenu(files, Set(collect(1:length(files))))
     i = request("Select the file, or multiple files in case of a segmented video, that constitute/s a single video:", menu)
     files[collect(i)]
 end

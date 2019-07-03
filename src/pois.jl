@@ -1,11 +1,11 @@
 poi_type_dialog = collect(Dialog() for _ in 1:10)
 
 function newpoi(i, id)
-    poitype = request("What POI is this (e.g. nest, feeder, track…)?", poi_type_dialog[i])
-    calibration = request("Which calibration calibrates this POI?", calibration_menu)
+    poitype = requestᵐ("What POI is this (e.g. nest, feeder, track…)?", poi_type_dialog[i])
+    calibration = requestᵐ("Which calibration calibrates this POI?", calibration_menu)
     temporal = newinterval(poitype == "track")
     poi = POI(calibration, temporal, id)
-    return Symbol(poitype) => poi
+    return Symbol(poitype), poi
 end
 
 function _formatrow(t) 
@@ -15,8 +15,16 @@ end
 
 function register_pois(ids)
 
-    pois = Dict(newpoi(i, id) for (i, id) in enumerate(ids))
-
+    @label newpoil
+    pois = Dict{Symbol, POI}()
+    for (i, id) in enumerate(ids)
+        poitype, poi = newpoi(i, id)
+        if haskey(pois, poitype)
+            @warn "there cannot be two identical POIs in the same run" poitype
+            @goto newpoil
+        end
+        pois[poitype] = poi
+    end
     file = joinpath(sourcefolder, "experiments.json")
     experiments = open(file, "r") do i 
         JSON3.read(i, Vector{Experiment})

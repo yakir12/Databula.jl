@@ -24,7 +24,7 @@ const times_dialog = Dict("start" => Dialog(), "stop" => Dialog())
 
 function get_time(vf, type)
     @label beginning
-    __time = request("When in this video file did this POI $(type)?", times_dialog[type])
+    __time = requestᵐ("""When in "$(vf.name)" did this POI $(type)?""", times_dialog[type])
     _time = goodtime(__time)
     if _time ≡ nothing
         println("Malformed time. Try again…")
@@ -45,7 +45,11 @@ function getstop(vfs, _start)
     else
         options = getfield.(vfs, :name)
         menu = RadioMenu(options)
-        request("In which video file did this POI stop?", menu)
+        if length(options) > 1
+            request("In which video file did this POI stop?", menu)
+        else
+            1
+        end
     end
     @label stop_time
     _stop = get_time(vfs[i], "stop")
@@ -56,7 +60,7 @@ function getstop(vfs, _start)
     _stop, i
 end
 
-const poi_dialog = Dialog()
+const poi_comment_dialog = Dialog()
 
 function findvideoindex(vf)
     for v in videos
@@ -70,7 +74,11 @@ end
 
 function newinterval(ask_stop::Bool)
     @label newintervall
-    i = request("In which video file did this POI start?", videofile_menu)
+    i = if length(videofile_menu.options) > 1
+        requestᵐ("In which video file did this POI start?", videofile_menu)
+    else
+        1
+    end
     start_video = videofiles[i]
     video, i = findvideoindex(start_video)
     _start = get_time(start_video, "start")
@@ -82,7 +90,7 @@ function newinterval(ask_stop::Bool)
     else
         missing
     end
-    comment = request("Comments about this specific POI?", poi_dialog)
+    comment = requestᵐ("Comments about this specific POI?", poi_comment_dialog)
     try 
         Temporal(video, AbstractPeriod(start, stop), comment)
     catch ex

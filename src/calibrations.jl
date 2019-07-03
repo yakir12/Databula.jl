@@ -13,7 +13,7 @@ function newboard(designations)
     end
     isempty(designation) && @goto desig
     @label width
-    _checker_width_cm = request("What is the width (same as height) of the checkers in cm?", checker_width_dialog)
+    _checker_width_cm = requestᵐ("What is the width (same as height) of the checkers in cm?", checker_width_dialog)
     if !all(isnumeric, filter(!isequal('.'), _checker_width_cm))
         @warn "width $_checker_width_cm is not a number, try again…"
         @goto width
@@ -24,7 +24,7 @@ function newboard(designations)
         @goto width
     end
     @label perwidth
-    _checker_per_width = request("How many checkers are there across the width of the board?", checker_per_width_dialog)
+    _checker_per_width = requestᵐ("How many checkers are there across the width of the board?", checker_per_width_dialog)
     if !all(isnumeric, _checker_per_width)
         @warn "$_checker_per_width is not an integer, try again…"
         @goto perwidth
@@ -35,7 +35,7 @@ function newboard(designations)
         @goto perwidth
     end
     @label perheight
-    _checker_per_height = request("How many checkers are there across the height of the board?", checker_per_height_dialog)
+    _checker_per_height = requestᵐ("How many checkers are there across the height of the board?", checker_per_height_dialog)
     if !all(isnumeric, _checker_per_height)
         @warn "$_checker_per_height is not an integer, try again…"
         @goto perheight
@@ -71,14 +71,14 @@ function newcalibration(boards)
         designations = getfield.(boards, :designation)
         options = designations
         pushfirst!(options, "Register a new board")
-        board_menu = RadioMenu(options, default = min(2, length(options)))
-        i = request("Which board was used?", board_menu)
+        board_menu = RadioMenu(options, min(2, length(options)))
+        i = requestᵐ("Which board was used?", board_menu)
         i == 1 ? newboard(designations) : boards[i - 1]
     end
 
     @label newcalibl
 
-    i = request("Which type of calibration is it?", calibration_type_menu)
+    i = requestᵐ("Which type of calibration is it?", calibration_type_menu)
     intrinsic = if i == 1 
         missing
     else
@@ -88,7 +88,7 @@ function newcalibration(boards)
     println("Registrating the extrinsic calibration POI (the checkerboard on the ground)")
     extrinsic = newinterval(false)
 
-    comment = request("Any comments about this calibration?", calibration_comment_dialog)
+    comment = requestᵐ("Any comments about this calibration?", calibration_comment_dialog)
     try 
         Calibration(intrinsic, extrinsic, board, comment)
     catch ex
