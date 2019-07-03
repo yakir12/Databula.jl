@@ -128,9 +128,9 @@ function integrity_test()
         else
             creation = unix2datetime(ctime(joinpath(coffeesource, file.name)))
             registered = start(file)
-            if registered ≠ actual
+            if registered ≠ creation
                 @warn "the registered starting date & time doesn't match the creation date & time on the file" registered creation
-                #=i = requestᵐ("Do you want to change the duration of this file to the actual duration, $creation ?", change_start)
+                #=i = requestᵐ("Do you want to change the registered starting date & time of this file to the creation date & time, $creation ?", change_start)
                 if i == 1
                     file.start = creation
                 end=#
