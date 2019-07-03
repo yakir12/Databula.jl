@@ -56,7 +56,7 @@ function test_duration_start()
 end
 
 
-function integrity_test()
+function test_integrity()
     @info "testing integrity of the videos"
     vs = deserialize(joinpath(sourcefolder, "video"))
     allregistered = vcat(filenames.(vs)...)
