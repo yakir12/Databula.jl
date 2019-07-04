@@ -11,7 +11,7 @@ end
 
 function getdatetime(file, minimum_dt)
     @label askdatetime
-    dialog = Dialog(string(unix2datetime(ctime(joinpath(coffeesource, file)))))
+    dialog = Dialog(string(min_creation(joinpath(coffeesource, file))))
     _dt = requestᵐ("Specify a creation date & time for: $file", dialog)
     dt = tryparsedatetime(_dt)
     if dt ≡ nothing

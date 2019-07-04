@@ -36,6 +36,7 @@ include("terminalmenus.jl")
 include("videos.jl")
 include("calibrations.jl")
 include("intervals.jl")
+include("tests.jl")
 
 # include("/home/yakir/dungProject/Databula/src/terminalmenus.jl")
 # include("/home/yakir/dungProject/Databula/src/videos.jl")
