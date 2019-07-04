@@ -3,7 +3,7 @@ module Databula
 using DungBase
 using Dates, VideoIO, Combinatorics, Serialization, UUIDs, Observables
 
-export register_video, register_calibration, test_integrity, test_duration#, register_experiment, register_run, register_poi
+export register_video, register_calibration, test_integrity, test_duration, edit_video#, register_experiment, register_run, register_poi
 
 const coffeesource = joinpath(homedir(), "coffeesource")
 const sourcefolder = joinpath(coffeesource, "database")

@@ -63,10 +63,10 @@ end
 const poi_comment_dialog = Dialog()
 
 function findvideoindex(vf)
-    for v in videos
+    for (j, v) in enumerate(videos)
         i = findfirst(isequal(vf), files(v))
         if !isnothing(i)
-            return v, i
+            return v, i, j
         end
     end
     error("couldn't find video file: $vf")
@@ -80,7 +80,7 @@ function newinterval(ask_stop::Bool)
         1
     end
     start_video = videofiles[i]
-    video, i = findvideoindex(start_video)
+    video, i, _ = findvideoindex(start_video)
     _start = get_time(start_video, "start")
     start = mapreduce(duration, +, files(video)[1:i-1], init = _start)
     stop = if ask_stop 

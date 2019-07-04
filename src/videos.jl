@@ -105,3 +105,34 @@ function newvideo(existing)
     _newvideo(files)
 end
 
+function newtl(tl::WholeVideo, _, start)
+    file = tl.file
+    WholeVideo(tl, (; start = start))
+end
+function newtl(tl::T, j, start) where T <: AbstractTimeLine
+    tl.files[j] = VideoFile(tl.files[j], (; start = start))
+    tl
+end
+
+function edit_video()
+    i = request("Which video file do you want to edit the registration of?", videofile_menu)
+    vf = videofiles[i]
+    video, ii, j = findvideoindex(vf)
+    @info """the current date & time of "$(vf.name)" is:""" start(vf)
+    st = getdatetime(vf.name, Date(0))
+    new_video = newtl(video, ii, st)
+    if video == new_video
+        @info "nothing changed"
+    else
+        videofiles[i] = files(new_video)[ii]
+        videos[j] = new_video
+        @info "changes are saved to file"
+        serialize(joinpath(sourcefolder, "video"), videos)
+    end
+end
+    
+
+
+    
+
+
