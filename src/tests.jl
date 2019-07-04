@@ -1,4 +1,53 @@
-const change_start = RadioMenu(["yes", "no"])
+# duration
+
+const change_duration = RadioMenu(["yes", "no"])
+
+function test_duration(file::VideoFile)
+    onfile = Time(0) + VideoIO.get_duration(joinpath(coffeesource, file.name))
+    regist = Time(0) + duration(file)
+    regist == onfile && return NamedTuple()
+    Δ = Time(0) + abs(onfile - regist)
+    @warn "the registered duration doesn't match the duration on the file" file.name regist onfile Δ
+    i = requestᵐ("Do you want to change the registered duration to the file's duration?", change_duration)
+    i == 2 && return NamedTuple()
+    (; duration = onfile - Time(0))
+end
+
+function test_duration(wv::WholeVideo)
+    file = files(wv)[]
+    WholeVideo(wv, test_duration(file))
+end
+
+function test_duration(tl::T) where T <: AbstractTimeLine
+    fs = files(tl)
+    for (i, file) in enumerate(fs)
+        fs[i] = VideoFile(file, test_duration(file))
+    end
+    T(tl, (; files = fs))
+end
+
+function test_duration()
+    @info "testing the duration and starting date & time of the videos"
+    vs = deserialize(joinpath(sourcefolder, "video"))
+    pass = true
+    for (i, v) in enumerate(vs)
+        v2 = test_duration(v)
+        if v2 ≠ v
+            vs[i] = v2
+            pass = false
+        end
+    end
+    if pass
+        @info "on-file and registered duration and starting date & time are equal"
+    else
+        @info "changes are saved to file"
+        serialize(joinpath(sourcefolder, "video"), vs)
+    end
+    pass
+end
+
+# starting
+#=const change_start = RadioMenu(["yes", "no"])
 
 function test_start(file)
     onfile = min_creation(joinpath(coffeesource, file.name))
@@ -9,19 +58,6 @@ function test_start(file)
     i = requestᵐ("Do you want to change the registered starting date & time to the file's date & time?", change_start)
     i == 2 && return NamedTuple()
     (; start = onfile)
-end
-
-const change_duration = RadioMenu(["yes", "no"])
-
-function test_duration(file)
-    onfile = Time(0) + VideoIO.get_duration(joinpath(coffeesource, file.name))
-    regist = Time(0) + duration(file)
-    regist == onfile && return NamedTuple()
-    Δ = Time(0) + abs(onfile - regist)
-    @warn "the registered duration doesn't match the duration on the file" file.name regist onfile Δ
-    i = requestᵐ("Do you want to change the registered duration to the file's duration?", change_duration)
-    i == 2 && return NamedTuple()
-    (; duration = onfile - Time(0))
 end
 
 function test_duration_start(wv::WholeVideo)
@@ -53,7 +89,7 @@ function test_duration_start()
     end
     serialize(joinpath(sourcefolder, "video"), vs)
     pass
-end
+end=#
 
 
 function test_integrity()
