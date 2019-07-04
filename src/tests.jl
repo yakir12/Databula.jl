@@ -15,7 +15,7 @@ end
 
 function test_duration(wv::WholeVideo)
     file = files(wv)[]
-    WholeVideo(wv, test_duration(file))
+    WholeVideo(wv, (; files = VideoFile(file, test_duration(file))))
 end
 
 function test_duration(tl::T) where T <: AbstractTimeLine
