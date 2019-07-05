@@ -19,6 +19,7 @@ This is a `Julia` script for registering the raw data into a long lasting and co
    ```julia
    add https://github.com/yakir12/DungBase.jl
    add https://github.com/yakir12/Databula.jl
+   add https://github.com/yakir12/DungAnalyse.jl
    ```
    and paste it in the newly opened Julia-terminal (make sure you ), press Enter (this may take some time), and when it's done press BackSpace (or Delete) until the promt changes back to `julia>`.
 
