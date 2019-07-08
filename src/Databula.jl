@@ -5,8 +5,8 @@ using Dates, VideoIO, Combinatorics, Serialization, UUIDs, Observables
 
 export register_video, register_calibration, test_integrity, test_duration, edit_video#, register_experiment, register_run, register_poi
 
-# const coffeesource = joinpath("/home/yakir/mnt", "coffeesource")
-const coffeesource = joinpath(homedir(), "coffeesource")
+const coffeesource = joinpath("/home/yakir/mnt", "coffeesource")
+# const coffeesource = joinpath(homedir(), "coffeesource")
 const sourcefolder = joinpath(coffeesource, "database")
 const pixelfolder = joinpath(sourcefolder, "pixel")
 
@@ -38,6 +38,8 @@ include("videos.jl")
 include("calibrations.jl")
 include("intervals.jl")
 include("tests.jl")
+
+include("change2ms.jl")
 
 # include("/home/yakir/dungProject/Databula/src/terminalmenus.jl")
 # include("/home/yakir/dungProject/Databula/src/videos.jl")
