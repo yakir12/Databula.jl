@@ -16,13 +16,15 @@ fun(_::Missing) = missing
 
 function change2ms()
 
-    vs = deserialize(joinpath(sourcefolder, "video"))
+    mv(joinpath(sourcefolder, "video"), joinpath(sourcefolder, "video_ns"), force=true)
+    vs = deserialize(joinpath(sourcefolder, "video_ns"))
     map!(fun, vs, vs)
-    serialize(joinpath(sourcefolder, "video_ms"), vs)
+    serialize(joinpath(sourcefolder, "video"), vs)
 
-    cs = deserialize(joinpath(sourcefolder, "calibration"))
+    mv(joinpath(sourcefolder, "calibration"), joinpath(sourcefolder, "calibration_ns"), force=true)
+    cs = deserialize(joinpath(sourcefolder, "calibration_ns"))
     map!(fun, cs, cs)
-    serialize(joinpath(sourcefolder, "calibrations_ms"), cs)
+    serialize(joinpath(sourcefolder, "calibration"), cs)
 
 end
 
