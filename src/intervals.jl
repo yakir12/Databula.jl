@@ -1,4 +1,4 @@
-secondtoms(x::String) = Millisecond(round(Int, parse(Float64, x)*1e3))
+secondtoms(x::AbstractString) = Millisecond(round(Int, parse(Float64, x)*1e3))
 
 function parsetime(x)
     xs = split(x, ':')
@@ -7,7 +7,6 @@ function parsetime(x)
         secondtoms(x)
     elseif n == 2
         Millisecond(Minute(xs[1])) + secondtoms(xs[2])
-
     else
         Millisecond(Hour(xs[1])) + Millisecond(Minute(xs[2])) + secondtoms(xs[3])
     end
