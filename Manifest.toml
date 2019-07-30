@@ -130,9 +130,9 @@ deps = ["Random", "Serialization", "Sockets"]
 uuid = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 
 [[DungBase]]
-deps = ["DataStructures", "Dates", "UUIDs"]
-git-tree-sha1 = "738b2290108e5efbc4ce11bc9b9a008484aaf42f"
-repo-rev = "master"
+deps = ["Dates", "IntervalSets", "StaticArrays", "UUIDs"]
+git-tree-sha1 = "f3e8ef7f940e6f27fe7248487527e09fca097ce6"
+repo-rev = "kavitha"
 repo-url = "https://github.com/yakir12/DungBase.jl"
 uuid = "bd6f3a87-2f53-57d0-9c4e-5625ef189a5e"
 version = "0.1.0"
@@ -217,6 +217,12 @@ deps = ["AxisAlgorithms", "LinearAlgebra", "OffsetArrays", "Random", "Ratios", "
 git-tree-sha1 = "e1bac96b5ef3ea23b50e801b4a988ec21861a47f"
 uuid = "a98d9a8b-a2ab-59e6-89dd-64a1c18fca59"
 version = "0.12.2"
+
+[[IntervalSets]]
+deps = ["Compat"]
+git-tree-sha1 = "9dc556002f23740de13946e8c2e41798e09a9249"
+uuid = "8197267c-284f-5f27-9208-e0e47529a953"
+version = "0.3.1"
 
 [[JLSO]]
 deps = ["BSON", "CodecZlib", "Memento", "Pkg", "Serialization"]
