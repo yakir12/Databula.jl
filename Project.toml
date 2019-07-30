@@ -5,12 +5,17 @@ version = "0.1.0"
 
 [deps]
 Combinatorics = "861a8166-3701-5b0c-9a16-15d98fcdc6aa"
+DataStructures = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
+DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
+Diana = "070d9d8b-17a7-5814-83fa-42438ba5c6e0"
 DungBase = "bd6f3a87-2f53-57d0-9c4e-5625ef189a5e"
+JLSO = "9da8a3cd-07a3-59c0-a743-3fdc52c30d11"
+MAT = "23992714-dd62-5051-b70f-ba57cb901cac"
 Observables = "510215fc-4207-5dde-b226-833fc4488ee2"
 REPL = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
-Serialization = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
+SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 UUIDs = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
 VideoIO = "d6d074c3-1acf-5d4c-9a43-ef38773959a2"
 

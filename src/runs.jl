@@ -1,4 +1,3 @@
-using DataStructures 
 
 getrun() = loadtable(run_file_name, indexcols = :run)
 

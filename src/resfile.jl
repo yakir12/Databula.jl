@@ -1,5 +1,3 @@
-using MAT, DelimitedFiles, SparseArrays
-
 # resfile = "/home/yakir/downloads/20141106_30_Dtowards.res"
 
 ncol(io) = size(read(io, "xdata"), 2)

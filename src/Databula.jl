@@ -1,9 +1,13 @@
 module Databula
 
 using DungBase
-using Dates, VideoIO, Combinatorics, Serialization, UUIDs, Observables
+using Dates, VideoIO, Combinatorics, JLSO, UUIDs, Observables, Diana, MAT, DelimitedFiles, SparseArrays, DataStructures 
+import REPL
+using REPL.TerminalMenus
 
-export register_video, register_calibration, test_integrity, test_duration, edit_video#, register_experiment, register_run, register_poi
+
+
+export register_video, register_calibration, add_resfile, test_integrity, test_duration, edit_video#, register_experiment, register_run, register_poi
 
 # const coffeesource = joinpath("/home/yakir/mnt", "coffeesource")
 const coffeesource = joinpath(homedir(), "coffeesource")
@@ -16,19 +20,35 @@ if !isdir(pixelfolder)
 else
     @info "found existing source folder" coffeesource
 end
-f = "video"
+f = "videos.jlso"
 file = joinpath(sourcefolder, f)
 if !isfile(file)
     @info "creating file" f
-    serialize(file, AbstractTimeLine[])
+    JLSO.save(file, AbstractTimeLine[])
 else
     @info "found existing file" file
 end
-f = "calibration"
+f = "calibrations.jlso"
 file = joinpath(sourcefolder, f)
 if !isfile(file)
     @info "creating file" f
-    serialize(file, Calibration[])
+    JLSO.save(file, Calibration[])
+else
+    @info "found existing file" file
+end
+f = "pois.jlso"
+file = joinpath(sourcefolder, f)
+if !isfile(file)
+    @info "creating file" f
+    JLSO.save(file, Vector{Pair{String, Pair{Symbol, POI{Calibration, Temporal}}}})
+else
+    @info "found existing file" file
+end
+f = "runs.jlso"
+file = joinpath(sourcefolder, f)
+if !isfile(file)
+    @info "creating file" f
+    JLSO.save(file, Dict{String, Dict{Symbol, POI{Calibration, Temporal}}})
 else
     @info "found existing file" file
 end
@@ -37,9 +57,12 @@ include("terminalmenus.jl")
 include("videos.jl")
 include("calibrations.jl")
 include("intervals.jl")
+include("resfile.jl")
+include("appinterface.jl")
+include("pois.jl")
 include("tests.jl")
 
-include("change2ms.jl")
+# include("change2ms.jl")
 
 # include("/home/yakir/dungProject/Databula/src/terminalmenus.jl")
 # include("/home/yakir/dungProject/Databula/src/videos.jl")
@@ -75,7 +98,7 @@ h1 = on(newvideoᵒ) do v
     push!(videos, v)
 end
 
-vs = deserialize(joinpath(sourcefolder, "video"))
+vs = JLSO.load(joinpath(sourcefolder, "videos.jlso"))["data"]
 for v in vs
     newvideoᵒ[] = v
 end
@@ -84,7 +107,7 @@ function register_video()
     v = newvideo(videofile_menu.options)
     if v ≢ nothing
         newvideoᵒ[] = v
-        serialize(joinpath(sourcefolder, "video"), videos)
+        JLSO.save(joinpath(sourcefolder, "videos.jlso"), videos)
     end
 end
 
@@ -100,13 +123,16 @@ _formatcalibration(x) = string("file: ", filenames(x), "; start: ", Time(0) + st
 
 h2 = on(newcalibrationᵒ) do c
     push!(calibration_menu.options, _formatcalibration(c))
+    if isempty(calibration_menu.selected)
+        push!(calibration_menu.selected, 1)
+    end
     if calibration_menu.pagesize < 11
         calibration_menu.pagesize += 1
     end
     push!(calibrations, c)
 end
 
-cs = deserialize(joinpath(sourcefolder, "calibration"))
+cs = JLSO.load(joinpath(sourcefolder, "calibrations.jlso"))["data"]
 for c in cs
     newcalibrationᵒ[] = c
 end
@@ -125,12 +151,22 @@ function register_calibration()
     boards = unique(c.board for c in values(calibrations))
     # k = getnewkey(calibrations)
     newcalibrationᵒ[] = newcalibration(boards)
-    serialize(joinpath(sourcefolder, "calibration"), calibrations)
+    JLSO.save(joinpath(sourcefolder, "calibrations.jlso"), calibrations)
+end
+
+
+newpoiᵒ = Observable{Any}(" " => :k => POI{Calibration, Temporal}())
+# newpoiᵒ = Observable{Pair{String, Pair{Symbol, POI{Calibration, Temporal}}}}(" " => :k => POI{Calibration, Temporal}())
+h3 = on(newpoiᵒ) do file_type_poi
+    pois = JLSO.load(joinpath(sourcefolder, "pois.jlso"))
+    f, kp = file_type_poi
+    pois[f] = kp
+    JLSO.save(joinpath(sourcefolder, "pois.jlso"), pois)
 end
 
 function add_resfile()
     ids = newresfile()
-    register_pois(ids)
+    r = register_pois(ids)
 end
 
 
