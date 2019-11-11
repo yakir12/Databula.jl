@@ -1,6 +1,3 @@
-import REPL
-using REPL.TerminalMenus
-
 mutable struct Dialog
     selected::String
 end
@@ -25,7 +22,9 @@ function requestᵐ(msg::AbstractString, m::RadioMenu)
     request(msg, m)
 end
 function requestᵐ(msg::AbstractString, m::MultiSelectMenu)
-    simulateInput(reduce(min, m.selected))
+    # if !isempty(m.selected)
+        simulateInput(reduce(min, m.selected))
+    # end
     request(msg, m)
 end
 function TerminalMenus.request(msg::String, m::Dialog)

@@ -41,7 +41,7 @@ function _newvideo(files)
     @label newvideol
     @info "Registering video file/s:" files
     sunregistered = getorder(files)
-    durations = [VideoIO.get_duration(joinpath(coffeesource, file_name)) for file_name in sunregistered]
+    durations = [Millisecond(round(Int, 1000VideoIO.get_duration(joinpath(coffeesource, file_name)) )) for file_name in sunregistered]
     comment = requestᵐ("Any comments about this video as a whole?", videocomment_dialog)
     nfiles = length(files)
     if nfiles == 1
@@ -58,7 +58,7 @@ function _newvideo(files)
         if i == 1
             date_times[1] = getdatetime(sunregistered[1], Date(0))
             for i in 2:nfiles
-                date_times[i] = date_times[i - 1] + durations[i - 1] + Nanosecond(1)
+                date_times[i] = date_times[i - 1] + durations[i - 1]
             end
             try 
                 return FragmentedVideo(VideoFile.(sunregistered, date_times, durations), comment)
@@ -127,7 +127,7 @@ function edit_video()
         videofiles[i] = files(new_video)[ii]
         videos[j] = new_video
         @info "changes are saved to file"
-        serialize(joinpath(sourcefolder, "video"), videos)
+        JLSO.save(joinpath(sourcefolder, "videos.jlso"), videos)
     end
 end
     

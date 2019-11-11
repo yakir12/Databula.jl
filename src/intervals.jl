@@ -1,14 +1,15 @@
-tonanosecond(x) = Nanosecond(round(Int, parse(Float64, x)*1e9))
+secondtoms(x::Float64) = Millisecond(round(Int, 1000x))
+secondtoms(x::AbstractString) = secondtoms(parse(Float64, x))
 
 function parsetime(x)
     xs = split(x, ':')
     n = length(xs)
     if n == 1
-        tonanosecond(x)
+        secondtoms(x)
     elseif n == 2
-        Nanosecond(Minute(xs[1])) + tonanosecond(xs[2])
+        Millisecond(Minute(xs[1])) + secondtoms(xs[2])
     else
-        Nanosecond(Hour(xs[1])) + Nanosecond(Minute(xs[2])) + tonanosecond(xs[3])
+        Millisecond(Hour(xs[1])) + Millisecond(Minute(xs[2])) + secondtoms(xs[3])
     end
 end
 
@@ -88,7 +89,7 @@ function newinterval(ask_stop::Bool)
         i += j - 1
         mapreduce(duration, +, files(video)[1:i-1], init = _stop)
     else
-        missing
+        nothing
     end
     comment = requestᵐ("Comments about this specific POI?", poi_comment_dialog)
     try 

@@ -3,7 +3,7 @@
 const change_duration = RadioMenu(["yes", "no"])
 
 function test_duration(file::VideoFile)
-    onfile = Time(0) + VideoIO.get_duration(joinpath(coffeesource, file.name))
+    onfile = Time(0) + secondtoms(VideoIO.get_duration(joinpath(coffeesource, file.name)))
     regist = Time(0) + duration(file)
     regist == onfile && return NamedTuple()
     Δ = Time(0) + abs(onfile - regist)
@@ -29,7 +29,7 @@ end
 
 function test_duration()
     @info "testing the duration and starting date & time of the videos"
-    vs = deserialize(joinpath(sourcefolder, "video"))
+    vs = JLSO.load(joinpath(sourcefolder, "videos.jlso"))["data"]
     pass = true
     for (i, v) in enumerate(vs)
         v2 = test_duration(v)
@@ -42,7 +42,7 @@ function test_duration()
         @info "on-file and registered duration and starting date & time are equal"
     else
         @info "changes are saved to file"
-        serialize(joinpath(sourcefolder, "video"), vs)
+        JLSO.save(joinpath(sourcefolder, "videos.jlso"), vs)
     end
     pass
 end
@@ -76,7 +76,7 @@ end
 
 function test_duration_start()
     @info "testing the duration and starting date & time of the videos"
-    vs = deserialize(joinpath(sourcefolder, "video"))
+    vs = JLSO.load(joinpath(sourcefolder, "videos.jlso"))["data"]
     pass = true
     for (i, v) in enumerate(vs)
         v2 = test_duration_start(v)
@@ -88,14 +88,14 @@ function test_duration_start()
     if pass
         @info "on-file and registered duration and starting date & time are equal"
     end
-    serialize(joinpath(sourcefolder, "video"), vs)
+    JLSO.save(joinpath(sourcefolder, "videos.jlso"), vs)
     pass
 end=#
 
 
 function test_integrity()
     @info "testing integrity of the videos"
-    vs = deserialize(joinpath(sourcefolder, "video"))
+    vs = JLSO.load(joinpath(sourcefolder, "videos.jlso"))["data"]
     allregistered = vcat(filenames.(vs)...)
     allfiles = filter(goodvideo, readdir(coffeesource))
     pass1 = true
@@ -120,7 +120,7 @@ function test_integrity()
     if pass2
         @info "all registered video files are accounted for"
     end
-    serialize(joinpath(sourcefolder, "video"), vs)
+    JLSO.save(joinpath(sourcefolder, "videos.jlso"), vs)
     pass1 && pass2
 end
 
