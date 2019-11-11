@@ -3,7 +3,7 @@
 const change_duration = RadioMenu(["yes", "no"])
 
 function test_duration(file::VideoFile)
-    onfile = Time(0) + VideoIO.get_duration(joinpath(coffeesource, file.name))
+    onfile = Time(0) + secondtoms(VideoIO.get_duration(joinpath(coffeesource, file.name)))
     regist = Time(0) + duration(file)
     regist == onfile && return NamedTuple()
     Δ = Time(0) + abs(onfile - regist)

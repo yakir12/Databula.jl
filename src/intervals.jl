@@ -1,4 +1,5 @@
-secondtoms(x::AbstractString) = Millisecond(round(Int, parse(Float64, x)*1e3))
+secondtoms(x::Float64) = Millisecond(round(Int, 1000x))
+secondtoms(x::AbstractString) = secondtoms(parse(Float64, x))
 
 function parsetime(x)
     xs = split(x, ':')
